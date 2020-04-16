@@ -460,7 +460,7 @@ class Parser
      */
     public function semanticalError($message = '', $token = null)
     {
-        if ($token === null) 
+        if ($token === null) {
             $token = $this->lexer->lookahead ?? ['position' => null];
         }
 
@@ -2452,11 +2452,16 @@ class Parser
         // Peek beyond the matching closing parenthesis ')'
         $peek = $this->peekBeyondClosingParenthesis();
 
+
         if ($peek !== null && (
             in_array($peek['value'], ['=', '<', '<=', '<>', '>', '>=', '!=']) ||
             in_array($peek['type'], [Lexer::T_NOT, Lexer::T_BETWEEN, Lexer::T_LIKE, Lexer::T_IN, Lexer::T_IS, Lexer::T_EXISTS]) ||
             $this->isMathOperator($peek)
         )) {
+            $condPrimary->simpleConditionalExpression = $this->SimpleConditionalExpression();
+
+            return $condPrimary;
+        }
 
         $this->match(Lexer::T_OPEN_PARENTHESIS);
         $condPrimary->conditionalExpression = $this->ConditionalExpression();
